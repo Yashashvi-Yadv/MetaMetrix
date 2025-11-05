@@ -1,0 +1,307 @@
+/* 🌐 DataUpload.css – Modern, Fully Responsive, Mobile-First */
+.data-upload-page {
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 80vh;
+  background: #f9fafb;
+}
+
+/* 🧩 Container Grid */
+.upload-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  align-items: start;
+}
+
+/* 🎛️ Panels */
+.upload-panel,
+.history-panel {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease;
+}
+
+.upload-panel:hover,
+.history-panel:hover {
+  transform: translateY(-2px);
+}
+
+.panel-title {
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.panel-subtitle {
+  color: #64748b;
+  font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+  margin-bottom: 1.5rem;
+}
+
+/* 🗂️ Drop Zone */
+.drop-zone {
+  border: 2.5px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+  position: relative;
+}
+
+.drop-zone.has-file {
+  border-color: #667eea;
+  background: #f0f5ff;
+}
+
+.drop-zone.uploading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.file-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.drop-label {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.upload-icon {
+  width: 48px;
+  height: 48px;
+  stroke: #94a3b8;
+}
+
+.browse {
+  color: #667eea;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.file-name {
+  font-weight: 600;
+  color: #1e293b;
+  word-break: break-word;
+}
+
+.file-size {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+/* 🚀 Upload Button */
+.upload-btn {
+  margin-top: 1.5rem;
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.9rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.upload-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.upload-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* 🔄 Spinner */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ⚠️ Error */
+.error-msg {
+  color: #ef4444;
+  font-size: 0.9rem;
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+/* 🕓 History */
+.no-history {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #94a3b8;
+}
+
+.history-icon {
+  width: 48px;
+  height: 48px;
+  stroke: #cbd5e1;
+  margin-bottom: 0.75rem;
+}
+
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.history-item {
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.file-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.upload-date {
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+/* 📱 Responsive Design */
+
+/* Tablet */
+@media (max-width: 992px) {
+  .upload-container {
+    gap: 1.5rem;
+  }
+
+  .upload-panel,
+  .history-panel {
+    padding: 1.5rem;
+  }
+
+  .panel-title {
+    font-size: 1.4rem;
+  }
+}
+
+/* Mobile Large (Landscape) */
+@media (max-width: 768px) {
+  .upload-container {
+    grid-template-columns: 1fr;
+  }
+
+  .upload-panel,
+  .history-panel {
+    padding: 1.25rem;
+  }
+
+  .drop-zone {
+    padding: 1.5rem;
+  }
+
+  .upload-btn {
+    font-size: 0.95rem;
+    padding: 0.8rem;
+  }
+
+  .panel-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .history-list {
+    max-height: 300px;
+  }
+}
+
+/* Mobile Small */
+@media (max-width: 480px) {
+  .data-upload-page {
+    padding: 1rem;
+  }
+
+  .upload-panel,
+  .history-panel {
+    padding: 1rem;
+  }
+
+  .panel-title {
+    font-size: 1.2rem;
+  }
+
+  .drop-zone {
+    padding: 1rem;
+  }
+
+  .file-name {
+    font-size: 0.9rem;
+  }
+
+  .file-size {
+    font-size: 0.8rem;
+  }
+
+  .upload-btn {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+.delete-btn {
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  font-size: 14px;
+}
+
+.delete-btn:hover {
+  background: #d9363e;
+}

@@ -1,0 +1,32 @@
+{
+  "name": "analytic_service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "chartjs-node-canvas": "^5.0.0",
+    "cookie-parser": "^1.4.7",
+    "cookieparser": "^0.1.0",
+    "cors": "^2.8.5",
+    "csv-parse": "^6.1.0",
+    "csvtojson": "^2.0.14",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mathjs": "^15.0.0",
+    "mongoose": "^8.19.2",
+    "multer": "^2.0.2",
+    "pandas-js": "^0.2.4",
+    "papaparse": "^5.5.3",
+    "xlsx": "^0.18.5"
+  }
+}
