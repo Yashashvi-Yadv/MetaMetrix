@@ -12,7 +12,7 @@ const SignIn = () => {
       const token = credentialResponse.credential;
 
       const res = await axios.post(
-        "http://localhost:5000/auth/google/login",
+        `${import.meta.env.VITE_AUTH_URL}auth/google/login`,
         { token },
         { withCredentials: true } // <-- send cookie
       );

@@ -19,7 +19,9 @@ const DataUpload = () => {
 
   const fetchHistory = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/data/get-history");
+      const res = await axios.get(
+        `${import.meta.env.VITE_DATAUPLOAD_URL}get-history`
+      );
       if (res.data.success) {
         setHistory(res.data.files);
       } else {

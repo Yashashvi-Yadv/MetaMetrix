@@ -1,0 +1,81 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:6.0
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+
+  authentication-service:
+    build:
+      context: ./server/services/authentication-service
+      dockerfile: Dockerfile
+    env_file:
+      - ./server/services/authentication-service/.env
+    ports:
+      - "5002:5002"
+    depends_on:
+      - mongo
+    volumes:
+      - ./shared_storage:/app/shared_storage
+
+  analytic_service:
+    build:
+      context: ./server/services/analytic_service
+      dockerfile: Dockerfile
+    env_file:
+      - ./server/services/analytic_service/.env
+    ports:
+      - "5001:5001"
+    depends_on:
+      - mongo
+    volumes:
+      - ./shared_storage:/app/shared_storage
+
+  dataupload-service:
+    build:
+      context: ./server/services/dataupload-service
+      dockerfile: Dockerfile
+    env_file:
+      - ./server/services/dataupload-service/.env
+    ports:
+      - "5003:5003"
+    depends_on:
+      - mongo
+    volumes:
+      - ./shared_storage:/app/shared_storage
+
+  gateway:
+    build:
+      context: ./server/gateway
+      dockerfile: Dockerfile
+    env_file:
+      - ./server/gateway/.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - authentication-service
+      - analytic_service
+      - dataupload-service
+    volumes:
+      - ./shared_storage:/app/shared_storage
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    env_file:
+      - ./client/.env
+    ports:
+      - "5173:5173"
+    depends_on:
+      - gateway
+    volumes:
+      - ./client:/app
+
+volumes:
+  mongo-data:
+    name: metametrix-mongo-data
