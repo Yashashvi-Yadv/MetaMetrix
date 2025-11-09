@@ -1,3 +1,4 @@
+// src/pages/ViewReports.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/DataUplaod.css";
@@ -6,8 +7,6 @@ import { useNavigate } from "react-router-dom";
 
 const ViewReports = () => {
   const navigate = useNavigate();
-  const [file, setFile] = useState(null);
-  const [status, setStatus] = useState("");
   const [history, setHistory] = useState([]);
   const [error, setError] = useState("");
 
@@ -31,7 +30,6 @@ const ViewReports = () => {
     }
   };
 
-  // ✅ DELETE history item by ID
   const handleDelete = async (id) => {
     try {
       const res = await axios.delete(
@@ -39,7 +37,7 @@ const ViewReports = () => {
       );
       if (res.data.success) {
         toast.success(res.data.message || "Deleted successfully!");
-        setHistory((prev) => prev.filter((item) => item._id !== id)); // update UI instantly
+        setHistory((prev) => prev.filter((item) => item._id !== id));
       } else {
         toast.error(res.data.message || "Failed to delete item.");
       }
@@ -52,7 +50,6 @@ const ViewReports = () => {
   return (
     <section className="data-upload-page">
       <div className="upload-container">
-        {/* ✅ History Panel */}
         <div className="history-panel">
           <h2 className="panel-title">Upload History</h2>
 
@@ -66,8 +63,13 @@ const ViewReports = () => {
             </div>
           ) : (
             <ul className="history-list">
-              {history.map((item, id) => (
-                <li key={id} className="history-item">
+              {history.map((item) => (
+                <li
+                  key={item._id}
+                  className="history-item"
+                  onClick={() => navigate(`/dashboard/analytic/${item._id}`)}
+                  style={{ cursor: "pointer" }}
+                >
                   <div className="file-meta">
                     <span className="file-name">{item.filename}</span>
                     <span className="file-size">{item.size}</span>
@@ -79,10 +81,13 @@ const ViewReports = () => {
                     )}
                   </div>
 
-                  {/* ✅ Delete Button */}
+                  {/* ✅ Prevent delete click from triggering navigation */}
                   <button
                     className="delete-btn"
-                    onClick={() => handleDelete(item._id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(item._id);
+                    }}
                   >
                     🗑 Delete
                   </button>

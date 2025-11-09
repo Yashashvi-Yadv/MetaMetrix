@@ -1,26 +1,16 @@
 import fs from "fs";
 import path from "path";
-import { parse } from "csv-parse/sync";
-import XLSX from "xlsx";
+import axios from "axios";
 import { AnalyticsResult } from "../models/file.shema.js";
 
 export const analyzeFile = async (req, res) => {
   try {
-    const { id } = req.params; // this is your fileId
+    const { id } = req.params;
 
-    // ✅ 1. Define upload directory
     const uploadDir = path.resolve(
       "D:/Projects/MetaMetrix/shared_storage/Uploads"
     );
 
-    if (!fs.existsSync(uploadDir)) {
-      return res.status(404).json({
-        success: false,
-        message: `Upload directory not found at ${uploadDir}`,
-      });
-    }
-
-    // ✅ 2. Find file by ID prefix
     const files = fs.readdirSync(uploadDir);
     const fileName = files.find((f) => f.startsWith(id));
 
@@ -31,60 +21,64 @@ export const analyzeFile = async (req, res) => {
       });
     }
 
-    const filePath = path.join(uploadDir, fileName);
-    const ext = path.extname(fileName).toLowerCase();
+    const fname = fileName.split(".")[0];
 
-    let rows = [];
+    // ✅ Check existing record
+    const existingReport = await AnalyticsResult.findOne({ fileId: fname });
 
-    // ✅ 3. Parse based on file extension
-    if (ext === ".csv") {
-      const content = fs.readFileSync(filePath, "utf-8");
-      rows = parse(content, { columns: true, skip_empty_lines: true });
-    } else if (ext === ".xlsx" || ext === ".xls") {
-      const workbook = XLSX.readFile(filePath);
-      const sheet = workbook.SheetNames[0];
-      rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheet]);
-    } else if (ext === ".json") {
-      const content = fs.readFileSync(filePath, "utf-8");
-      const json = JSON.parse(content);
-      rows = Array.isArray(json) ? json : [json];
-    } else {
-      return res.status(400).json({
-        success: false,
-        message: "Unsupported file format",
+    if (existingReport && existingReport.analyzed) {
+      console.log(`🟢 Returning cached analysis for ${fname}`);
+      return res.status(200).json({
+        success: true,
+        message: `Cached report fetched for ${fname}`,
+        ...existingReport.toObject(),
       });
     }
 
-    // ✅ 4. Save or update MongoDB entry
-    const existing = await AnalyticsResult.findOne({ filename: fileName });
+    // ✅ Call Django
+    const djangoUrl = `http://127.0.0.1:8000/reports/analyze/${fname}`;
+    console.log(`🧠 Sending request to Django: ${djangoUrl}`);
 
-    if (existing) {
-      existing.analysis = { data: rows };
-      existing.analyzed = true;
-      existing.analyzedAt = new Date();
-      await existing.save();
-      console.log(`♻️ Updated existing analytics record for ${fileName}`);
-    } else {
-      await AnalyticsResult.create({
-        fileId: id, // ✅ correct field
-        filename: fileName,
+    const response = await axios.get(djangoUrl, {
+      headers: { Accept: "application/json" },
+    });
+
+    const {
+      success,
+      message,
+      file_name,
+      sweetviz_html,
+      ydata_html,
+      sweetviz_path,
+      ydata_path,
+    } = response.data;
+
+    // ✅ Save or Update
+    const newReport = await AnalyticsResult.findOneAndUpdate(
+      { fileId: fname },
+      {
+        fileId: fname,
+        fileName: file_name,
+        sweetviz_html,
+        ydata_html,
+        sweetviz_path,
+        ydata_path,
         analyzed: true,
-        analyzedAt: new Date(),
-        analysis: { data: rows }, // ✅ matches schema
-      });
-    }
+        message,
+        success,
+      },
+      { upsert: true, new: true }
+    );
 
-    // ✅ 5. Respond with analysis summary
-    res.json({
+    console.log(`✅ Report saved for ${fname}`);
+
+    res.status(200).json({
       success: true,
-      message: "File analyzed and saved to database successfully",
-      filename: fileName,
-      totalRows: rows.length,
-      totalColumns: Object.keys(rows[0] || {}).length,
-      sampleData: rows.slice(0, 5),
+      message: `Reports generated successfully for ${file_name}`,
+      ...newReport.toObject(),
     });
   } catch (err) {
-    console.error("❌ Analysis Error:", err);
+    console.error("❌ Error in analyzeFile:", err.message);
     res.status(500).json({
       success: false,
       message: err.message,

@@ -1,8 +1,20 @@
 # MetaMetrix
 
-A lightweight analytics platform composed of a Vite + React client and multiple backend microservices (gateway, authentication-service, analytic_service, dataupload-service). This README explains how the app is organized, how to run it locally, the expected environment variables (.env), and an overview of available APIs.
+A comprehensive analytics platform built with microservices architecture, combining React for the frontend with Node.js and Django backend services. The platform provides data upload, authentication, analytics processing, and visualization capabilities through a modular service-oriented design.
 
-## Repo layout
+## Architecture Overview
+
+The application uses a microservices architecture with the following components:
+
+- Frontend: React + Vite application for user interface
+- API Gateway: Node.js service that routes requests to appropriate microservices
+- Microservices:
+  - Authentication Service (Node.js): Handles user authentication and Google OAuth
+  - Data Upload Service (Node.js): Manages file uploads and storage
+  - Analytics Service (Node.js): Processes data and generates charts
+  - Reports Service (Django): Handles report generation and advanced analytics
+
+## Repo Layout
 
 Top-level folders:
 
@@ -12,18 +24,29 @@ Top-level folders:
   - `services/authentication-service/` — user auth and Google auth controllers
   - `services/analytic_service/` — analytics endpoints and chart controllers
   - `services/dataupload-service/` — endpoints to upload/process CSV or other files
+  - `services/metametrix_analytics/` — Django service for advanced analytics and reporting
+    - `reports_service/` — Django app for report generation
+    - `metametrix_analytics/` — Django project settings and config
 - `shared_storage/` — shared uploads and processed output used by services
+  - `Uploads/` — raw uploaded files
+  - `Processed/` — generated reports and analysis outputs
 
 ## Quick prerequisites
 
 - Node.js (v16+ recommended)
 - npm (or pnpm/yarn) available on PATH
+- Python 3.8+ with pip and virtualenv
 - A running MongoDB instance (or a connection string for a hosted DB)
 - Docker & Docker Compose (optional but recommended for local full-stack runs)
 
 Optional (recommended for caching/performance):
 
 - Redis (can run in Docker via docker-compose)
+
+For the Django Reports Service:
+
+- Python dependencies: See `server/services/metametrix_analytics/requirements.txt`
+- PostgreSQL (recommended) or SQLite for development
 
 ## Environment (.env)
 
@@ -66,8 +89,19 @@ Gateway (example `.env`)
 - AUTH_SERVICE_URL=http://localhost:5002
 - ANALYTIC_SERVICE_URL=http://localhost:5001
 - DATAUPLOAD_SERVICE_URL=http://localhost:5003
+- REPORTS_SERVICE_URL=http://localhost:8000
 
-Note: The exact variable names used by each service may differ slightly. Check the `config/` files (e.g. `connectdb.js`) in each service to confirm the variable names, or set them as process environment variables when starting the service.
+Django Reports Service (example `.env`)
+
+- DEBUG=True
+- SECRET_KEY=your-django-secret-key
+- ALLOWED_HOSTS=localhost,127.0.0.1
+- DATABASE_URL=postgresql://user:pass@localhost/metametrix_reports
+- JWT_SECRET=same-as-other-services # Must match authentication service
+- CORS_ALLOWED_ORIGINS=http://localhost:5173
+- STORAGE_PATH=../../shared_storage/Processed
+
+Note: The exact variable names used by each service may differ slightly. Check the `config/` files (e.g. `connectdb.js`) and Django settings in each service to confirm the variable names, or set them as process environment variables when starting the service.
 
 ## Running the app locally
 
@@ -154,11 +188,49 @@ The project uses a gateway to forward requests to service-specific endpoints. Be
   - GET /api/data/files/:id/download — download uploaded file
 
 - Analytic service (example)
+
   - POST /api/analytics/run — run an analysis job against uploaded data
   - GET /api/analytics/reports — list generated reports
   - GET /api/analytics/reports/:id — get a specific report
 
+- Django Reports Service (example)
+  - POST /api/reports/generate — generate comprehensive analytics report
+  - GET /api/reports/templates — list available report templates
+  - GET /api/reports/{id}/download — download generated report
+  - GET /api/reports/metrics — get aggregated metrics
+  - POST /api/reports/custom — create custom report with specific parameters
+
 Gateway routes are typically mounted under `/api/*` and proxied to the appropriate service. Check `server/gateway/index.js` for the concrete proxy rules.
+
+### Django Service Setup Notes
+
+The Django Reports Service requires additional setup for development:
+
+1. Database setup
+
+```bash
+cd server/services/metametrix_analytics
+python manage.py makemigrations
+python manage.py migrate
+```
+
+2. Create a superuser (optional, for admin access)
+
+```bash
+python manage.py createsuperuser
+```
+
+3. Access points
+
+- Admin interface: http://localhost:8000/admin/
+- API endpoints: http://localhost:8000/api/reports/
+- Swagger docs: http://localhost:8000/api/schema/swagger-ui/
+
+4. Running tests
+
+```bash
+python manage.py test
+```
 
 ## Caching and performance
 
