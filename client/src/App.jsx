@@ -1,71 +1,36 @@
-// App.js - Unchanged
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./components/AuthContext"; // <-- Import Provider
 import Header from "./components/Header";
-import Hero from "./components/Hero";
 import Footer from "./components/Footer";
-import SignIn from "./pages/static/SignIn";
-import "./App.css";
-import { Toaster } from "react-hot-toast";
-import ProtectedRoute from "./utils/Protected";
-import Dashboard from "./components/Dashboard";
-import DataUpload from "./ProtectedPages/DataUpload";
-import Analytic from "./ProtectedPages/Analytic";
-import ViewReports from "./ProtectedPages/ViewReports";
-const Home = () => {
-  return (
-    <div className="page-content">
-      <Hero />
-    </div>
-  );
-};
+import MetaMetrixLanding from "./components/Landing";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Dashboard from "./components/Dashboard"; // <-- Import Dashboard
 
-const App = () => {
+function App() {
   return (
-    <Router>
-      <div className="app-wrapper">
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/dataupload/"
-            element={
-              <ProtectedRoute>
-                <DataUpload />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/viewreports/"
-            element={
-              <ProtectedRoute>
-                <ViewReports />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/analytic/:id"
-            element={
-              <ProtectedRoute>
-                <Analytic />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-        <Footer />
-        <Toaster position="top-right" reverseOrder={false} />
-      </div>
-    </Router>
+    <AuthProvider>
+      {" "}
+      {/* Provider Wrap */}
+      <Router>
+        <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-900 selection:bg-blue-200">
+          <Header />
+
+          <main className="flex-grow flex flex-col">
+            <Routes>
+              <Route path="/" element={<MetaMetrixLanding />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Routes>
+          </main>
+
+          <Footer />
+        </div>
+      </Router>
+    </AuthProvider>
   );
-};
+}
 
 export default App;
