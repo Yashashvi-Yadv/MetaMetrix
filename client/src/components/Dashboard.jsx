@@ -63,7 +63,7 @@ const Dashboard = () => {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/upload/analyze`,
+        `https://metametrix.onrender.com/api/upload/analyze`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -96,7 +96,7 @@ const Dashboard = () => {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/upload/chat`,
+        `https://metametrix.onrender.com/api/upload/chat`,
         {
           question: userMessage,
           dataContext: rawParsedData,
