@@ -63,7 +63,7 @@ const Dashboard = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/upload/analyze",
+        `${import.meta.env.VITE_API_URL}/api/upload/analyze`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -96,7 +96,7 @@ const Dashboard = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/upload/chat",
+        `${import.meta.env.VITE_API_URL}/api/upload/chat`,
         {
           question: userMessage,
           dataContext: rawParsedData,
