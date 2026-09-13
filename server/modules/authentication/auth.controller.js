@@ -23,7 +23,7 @@ export const userController = {
       // Set JWT in HttpOnly cookie
       res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // true if on HTTPS
+        secure: true, // true if on HTTPS
         sameSite: "strict",
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
