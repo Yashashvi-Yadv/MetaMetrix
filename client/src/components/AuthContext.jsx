@@ -1,11 +1,10 @@
 import React, { createContext, useState } from "react";
 import Cookies from "js-cookie";
+import axios from "axios";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // 1. App start hote hi synchronously check karo ki token aur user hai ya nahi
-  // Isko "Lazy Initialization" bolte hain React mein
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
@@ -19,14 +18,13 @@ export const AuthProvider = ({ children }) => {
   });
 
   const login = (token, userData) => {
-    Cookies.set("token", token, { expires: 7 });
     localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
     setIsAuthenticated(true);
   };
 
-  const logout = () => {
-    Cookies.remove("token");
+  const logout = async () => {
+    await axios.get("https://metametrix.onrender.com/api/auth/logout");
     localStorage.removeItem("user");
     setUser(null);
     setIsAuthenticated(false);
