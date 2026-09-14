@@ -36,7 +36,7 @@ export const aiService = {
       }
     `;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash-lite" });
     const result = await model.generateContent(prompt);
 
     const responseText = result.response
@@ -60,7 +60,9 @@ export const aiService = {
         Act as a Data Analyst. Give a concise, professional answer based ONLY on the provided data. Do not use complex formatting.
       `;
 
-      const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+      const model = genAI.getGenerativeModel({
+        model: "gemini-3.5-flash-lite",
+      });
       const result = await model.generateContent(prompt);
 
       return result.response.text();
