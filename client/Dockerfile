@@ -3,12 +3,13 @@ FROM node:22-alpine
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+# Development ke liye 'npm install' 
+RUN npm install
 
 COPY . .
 
-RUN npm run build
-
+# 
 EXPOSE 5173
 
-CMD ["npm", "start", "--", "--host", "0.0.0.0"]
+# CMD ko 'npm run dev' 
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
