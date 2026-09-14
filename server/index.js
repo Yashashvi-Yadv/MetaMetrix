@@ -18,9 +18,7 @@ app.set("trust proxy", 1);
 const PORT = process.env.PORT || 5000;
 
 // Env variable se trailing slash hatane ke liye (e.g. '/' at the end)
-const allowedOrigin = process.env.ORIGIN
-  ? process.env.ORIGIN.replace(/\/$/, "")
-  : "";
+const allowedOrigin = process.env.ORIGIN;
 
 const corsOptions = {
   origin: allowedOrigin,
