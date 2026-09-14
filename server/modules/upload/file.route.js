@@ -5,7 +5,7 @@ import { verifyToken } from "../../middleware/GlobalAuthMiddleware.js"; // Auth 
 
 const router = express.Router();
 
-router.post("/analyze", verifyToken, uploadFile, uploadController.handleUpload);
-router.post("/chat", verifyToken, uploadController.handleChat);
+router.post("/analyze", uploadFile, uploadController.handleUpload);
+router.post("/chat", uploadController.handleChat);
 
 export default router;
