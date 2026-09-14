@@ -1,7 +1,7 @@
 import React, { createContext, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-
+axios.defaults.withCredentials = true;
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {

@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
 import axios from "axios";
+axios.defaults.withCredentials = true;
+
 import {
   BarChart,
   Bar,
@@ -138,7 +140,7 @@ const Dashboard = () => {
             >
               <h3 className="text-md font-bold text-slate-700 text-center mb-4">
                 {chart.title}
-              </h3> 
+              </h3>
               <div className="flex-grow w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   {chart.chartType === "bar" ? (
