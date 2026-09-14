@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
   });
 
   const login = (token, userData) => {
+    Cookies.set("token", token);
     localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
     setIsAuthenticated(true);
