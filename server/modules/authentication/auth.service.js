@@ -34,7 +34,7 @@ export const userService = {
     // Generate JWT payload
     const token = jwt.sign(
       { id: user._id, email: user.email },
-      process.env.JWT_SECRET || "fallback_secret_key",
+      "fallback_secret_key",
       { expiresIn: "1d" },
     );
 
